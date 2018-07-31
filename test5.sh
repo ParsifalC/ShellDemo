@@ -6,7 +6,13 @@ detectPngFile(){
 	type=$(file -b $1 | cut -d, -f1)
 
 	if [[ $type = $pngtype ]]; then
-		echo $type
+		echo "开始压缩：$1.."
+		crunch $1
+		echo "压缩完成，开始替换.."
+		nosuffix=${1%.*}
+		crunchname="$nosuffix-crunch.png"
+		mv $crunchname $1
+		echo "替换完成.."
 	fi
 }
 
