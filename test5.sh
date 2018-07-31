@@ -2,9 +2,12 @@
 
 #判断文件类型是否为 png
 detectPngFile(){
-	# type = $(file -b $1 | cut -d, -f1)
-	# echo $type
-	echo $1
+	pngtype="PNG image data"
+	type=$(file -b $1 | cut -d, -f1)
+
+	if [[ $type = $pngtype ]]; then
+		echo $type
+	fi
 }
 
 #递归遍历当前目录所有文件
