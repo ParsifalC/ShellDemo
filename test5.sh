@@ -70,7 +70,7 @@ thinPngImage(){
 
 #start thining all the png imgs under current directory
 startThining(){
-	for i in $(ls)) 
+	for i in $(ls)
 	do 
 		if [[ -d "$i" ]]; then
 			cd "$i"
