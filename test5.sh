@@ -83,4 +83,4 @@ startThining(){
 	done
 }
 
-# startThining
+startThining
