@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #判断文件类型是否为 png
-detectPngFile(){
-	pngtype="PNG image data"
-	type=$(file -b $1 | cut -d, -f1)
+thinPngImage(){
+	isPngImage $1
+	isPng=$?
 
-	if [[ $type = $pngtype ]]; then
+	if [[ $isPng = 1 ]]; then
 		echo "开始压缩：$1.."
 		crunch $1
 		echo "压缩完成，开始替换.."
@@ -16,20 +16,31 @@ detectPngFile(){
 	fi
 }
 
+isPngImage(){
+	pngtype="PNG image data"
+	type=$(file -b $1 | cut -d, -f1)
+
+	if [[ $type = $pngtype ]]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
 #递归遍历当前目录所有文件
-getFilePaths(){
+startThining(){
 	dir=$(ls)
 
 	for i in $dir 
 	do 
 		if [[ -d "$i" ]]; then
 			cd "$i"
-			getFilePaths
+			startThining
 			cd ..
 		else
-			detectPngFile $i
+			thinPngImage $i
 		fi
 	done
 }
 
-getFilePaths
+startThining
