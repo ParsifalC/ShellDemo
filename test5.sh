@@ -9,11 +9,14 @@ currentDir=$(cd "$(dirname "$0")";pwd)
 #eg:writeThiningReport "1MB 500Kb /imgs/assets"
 writeThiningReport(){
 	if [[ -e ~/desktop/ThiningRepot.txt ]]; then
-		echo $1 >> ~/desktop/ThiningRepot.txt
+		echo $* >> ~/desktop/ThiningRepot.txt
 	else
 		echo "OriginalSize | CurrentSize | ResourcePath" > ~/desktop/ThiningRepot.txt
-		writeThiningReport $1
+		writeThiningReport $*
 	fi
+
+  	# open ~/desktop/ThiningRepot.txt
+  	column -t -s '|' ~/desktop/ThiningRepot.txt
 }
 
 #thin the given img
