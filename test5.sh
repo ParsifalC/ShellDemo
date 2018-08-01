@@ -11,30 +11,12 @@ writeThiningReport(){
 	if [[ -e ~/desktop/ThiningRepot.txt ]]; then
 		echo $* >> ~/desktop/ThiningRepot.txt
 	else
-		echo "OriginalSize | CurrentSize | ResourcePath" > ~/desktop/ThiningRepot.txt
+		echo "OriginalSize | CurrentSize | ReduceSize | ReduceRate | ResourcePath" > ~/desktop/ThiningRepot.txt
 		writeThiningReport $*
 	fi
 
   	# open ~/desktop/ThiningRepot.txt
   	column -t -s '|' ~/desktop/ThiningRepot.txt
-}
-
-#thin the given img
-#param:imagepath
-#eg:thinPngImage "/imgs/eg.png"
-thinPngImage(){
-	isPngImage $1
-	isPng=$?
-
-	if [[ $isPng = 1 ]]; then
-		echo "start thining：$1.."
-		crunch $1
-		echo "complete thining，start replacing.."
-		nosuffix=${1%.*}
-		crunchname="$nosuffix-crunch.png"
-		mv $crunchname $1
-		echo "done：$1"
-	fi
 }
 
 #detect img type if it is a png
@@ -48,6 +30,42 @@ isPngImage(){
 		return 1
 	else
 		return 0
+	fi
+}
+
+#thin the given img
+#param:imagepath
+#eg:thinPngImage "/imgs/eg.png"
+thinPngImage(){
+	isPngImage $*
+	isPng=$?
+	totalOriginalSize=0
+	totalCurrentSize=0
+	totalReduceSize=0
+	totalReduceRate=0
+
+	if [[ $isPng = 1 ]]; then
+		originalSize=$(wc -c <"$*")
+		echo "start thining：$* original size：$originalSize"
+		crunch $1
+		echo "complete thining，start replacing.."
+		nosuffix=${1%.*}
+		crunchname="$nosuffix-crunch.png"
+		mv $crunchname $*
+		currentSize=$(wc -c <"$*")
+		echo "done：$* current size：$currentSize"
+
+		#calculate
+		totalOriginalSize=$(expr $totalOriginalSize + $originalSize)
+		totalCurrentSize=$(expr $totalCurrentSize + $currentSize)
+		totalReduceSize=$(expr $totalOriginalSize - $totalCurrentSize)
+		totalReduceRate=$(echo "scale=2;$totalReduceSize / $totalOriginalSize * 100"|bc)
+
+		echo $totalReduceRate
+
+		writeThiningReport "$(expr $totalOriginalSize / 1024)KB | $(expr $totalCurrentSize / 1024)KB | $(expr $totalReduceSize / 1024)KB | $totalReduceRate% | $*"
+	else
+		echo "$* isn't a png file."
 	fi
 }
 
