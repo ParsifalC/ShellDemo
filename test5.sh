@@ -1,5 +1,21 @@
 #!/bin/bash
 
+#global variables
+dir=$(ls)
+currentDir=$(cd "$(dirname "$0")";pwd)
+
+#write the thining result to file
+#param:result
+#eg:writeThiningReport "1MB 500Kb /imgs/assets"
+writeThiningReport(){
+	if [[ -e ~/desktop/ThiningRepot.txt ]]; then
+		echo $1 >> ~/desktop/ThiningRepot.txt
+	else
+		echo "OriginalSize | CurrentSize | ResourcePath" > ~/desktop/ThiningRepot.txt
+		writeThiningReport $1
+	fi
+}
+
 #thin the given img
 #param:imagepath
 #eg:thinPngImage "/imgs/eg.png"
@@ -34,8 +50,6 @@ isPngImage(){
 
 #start thining all the png imgs under current directory
 startThining(){
-	dir=$(ls)
-
 	for i in $dir 
 	do 
 		if [[ -d "$i" ]]; then
@@ -48,4 +62,4 @@ startThining(){
 	done
 }
 
-startThining
+# startThining
