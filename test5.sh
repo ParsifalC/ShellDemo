@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #global variables
-dir=$(ls)
 currentDir=$(cd "$(dirname "$0")";pwd)
 
 #write the thining result to file
@@ -71,7 +70,7 @@ thinPngImage(){
 
 #start thining all the png imgs under current directory
 startThining(){
-	for i in $dir 
+	for i in $(ls)) 
 	do 
 		if [[ -d "$i" ]]; then
 			cd "$i"
