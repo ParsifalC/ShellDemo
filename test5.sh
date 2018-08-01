@@ -1,21 +1,26 @@
 #!/bin/bash
 
-#判断文件类型是否为 png
+#thin the given img
+#param:imagepath
+#eg:thinPngImage "/imgs/eg.png"
 thinPngImage(){
 	isPngImage $1
 	isPng=$?
 
 	if [[ $isPng = 1 ]]; then
-		echo "开始压缩：$1.."
+		echo "start thining：$1.."
 		crunch $1
-		echo "压缩完成，开始替换.."
+		echo "complete thining，start replacing.."
 		nosuffix=${1%.*}
 		crunchname="$nosuffix-crunch.png"
 		mv $crunchname $1
-		echo "替换完成.."
+		echo "done：$1"
 	fi
 }
 
+#detect img type if it is a png
+#param:filepath
+#eg:isPngImage "/test/file.png"
 isPngImage(){
 	pngtype="PNG image data"
 	type=$(file -b $1 | cut -d, -f1)
@@ -27,7 +32,7 @@ isPngImage(){
 	fi
 }
 
-#递归遍历当前目录所有文件
+#start thining all the png imgs under current directory
 startThining(){
 	dir=$(ls)
 
