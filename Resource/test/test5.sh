@@ -2,6 +2,10 @@
 
 #global variables
 currentDir=$(cd "$(dirname "$0")";pwd)
+totalOriginalSize=0
+totalCurrentSize=0
+totalReduceSize=0
+totalReduceRate=0
 
 #write the thining result to file
 #param:result
@@ -38,10 +42,6 @@ isPngImage(){
 thinPngImage(){
 	isPngImage $*
 	isPng=$?
-	totalOriginalSize=0
-	totalCurrentSize=0
-	totalReduceSize=0
-	totalReduceRate=0
 
 	if [[ $isPng = 1 ]]; then
 		originalSize=$(wc -c <"$*")
@@ -57,12 +57,8 @@ thinPngImage(){
 		#calculate
 		totalOriginalSize=$(expr $totalOriginalSize + $originalSize)
 		totalCurrentSize=$(expr $totalCurrentSize + $currentSize)
-		totalReduceSize=$(expr $totalOriginalSize - $totalCurrentSize)
-		totalReduceRate=$(echo "scale=2;$totalReduceSize / $totalOriginalSize * 100"|bc)
 
-		echo $totalReduceRate
-
-		writeThiningReport "$(expr $totalOriginalSize / 1024)KB | $(expr $totalCurrentSize / 1024)KB | $(expr $totalReduceSize / 1024)KB | $totalReduceRate% | $*"
+		echo $totalOriginalSize $totalCurrentSize
 	else
 		echo "$* isn't a png file."
 	fi
@@ -82,4 +78,18 @@ startThining(){
 	done
 }
 
-startThining
+#start thining & log report
+start(){
+	startThining
+
+	echo "=======================calculating======================="
+
+	totalOriginalSize=$(echo "scale=2;$totalOriginalSize / 1204"|bc)
+	totalCurrentSize=$(echo "scale=2;$totalCurrentSize / 1024"|bc)
+	totalReduceSize=$(echo "scale=2;$totalOriginalSize - $totalCurrentSize"|bc)
+	totalReduceRate=$(echo "scale=2;$totalReduceSize / $totalOriginalSize * 100"|bc)
+
+	writeThiningReport "${totalOriginalSize}KB | ${totalCurrentSize}KB | ${totalReduceSize}KB | ${totalReduceRate}% | $*"
+}
+
+start
